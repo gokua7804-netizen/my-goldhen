@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مستضيف GoldHEN الخاص بك</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121214;
+            color: #ffffff;
+            text-align: center;
+            padding: 40px 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 600px;
+            background: #1a1a1e;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            margin: 0 auto;
+            border: 1px solid #2a2a30;
+        }
+        h1 { color: #007acc; font-size: 24px; margin-bottom: 20px; }
+        p { color: #aaaaaa; font-size: 15px; line-height: 1.6; }
+        .status-box {
+            background: #222226;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid #007acc;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .input-group {
+            margin: 15px 0;
+            text-align: right;
+        }
+        label { display: block; margin-bottom: 8px; color: #cccccc; font-size: 14px; }
+        input[type="text"], input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            background: #2a2a30;
+            border: 1px solid #3a3a42;
+            color: white;
+            border-radius: 6px;
+        }
+        .btn {
+            background: #007acc;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+            transition: 0.3s;
+        }
+        .btn:hover { background: #005999; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>مستضيف تفعيل GoldHEN الذاتي</h1>
+    <p>قم بفتح هذه الصفحة من متصفح الـ <b>PS4</b> لتفعيل الـ BinLoader أولاً، أو استخدمها من الكمبيوتر/الهاتف لإرسال ملف الـ Payload.</p>
+    
+    <div class="status-box" id="status">
+        حالة النظام: جاهز وينتظر الإجراء...
+    </div>
+
+    <div class="input-group">
+        <label>IP الخاص بجهاز الـ PS4:</label>
+        <input type="text" id="ps4ip" placeholder="مثال: 192.168.1.15">
+    </div>
+
+    <div class="input-group">
+        <label>اختر ملف البايلود (GoldHEN.bin):</label>
+        <input type="file" id="payloadFile" accept=".bin">
+    </div>
+
+    <button class="btn" onclick="sendPayload()">إرسال البايلود إلى الـ PS4</button>
+</div>
+
+<script>
+    function log(message) {
+        document.getElementById('status').innerText = message;
+    }
+
+    async function sendPayload() {
+        const ip = document.getElementById('ps4ip').value;
+        const fileInput = document.getElementById('payloadFile');
+        
+        if (!ip) {
+            alert('الرجاء إدخال عنوان IP الخاص بالـ PS4');
+            return;
+        }
+        if (fileInput.files.length === 0) {
+            alert('الرجاء اختيار ملف GoldHEN.bin أولاً');
+            return;
+        }
+
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+
+        log("جاري قراءة ملف البايلود...");
+
+        reader.onload = function(e) {
+            const buffer = e.target.result;
+            log("جاري الاتصال بالـ PS4 على منفذ 9090...");
+
+            const socket = new WebSocket("ws://" + ip + ":9090"); 
+            // ملاحظة: بعض الثغرات تستخدم مآخذ عادية (الشبكة المحلية)، إذا كنت ترسل من المتصفح مباشرة للـ PS4
+            
+            // محاكاة إرسال عبر أداة المتصفح القياسية للشبكة
+            fetch("http://" + ip + ":9090", {
+                method: "POST",
+                body: buffer,
+                mode: "no-cors"
+            }).then(() => {
+                log("تم إرسال البايلود بنجاح! راجع شاشة الـ PS4 الآن.");
+            }).catch(err => {
+                log("خطأ في الاتصال! تأكد من تفعيل الـ BinLoader على الـ PS4 وتطابق الـ IP.");
+            });
+        };
+
+        reader.readAsArrayBuffer(file);
+    }
+</script>
+
+</body>
+</html>
