@@ -3,128 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مستضيف GoldHEN الخاص بك</title>
+    <title>مضيف GoldHEN الخاص بي</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121214;
+            font-family: sans-serif;
+            background-color: #121212;
             color: #ffffff;
             text-align: center;
-            padding: 40px 20px;
-            margin: 0;
+            padding: 20px;
         }
         .container {
             max-width: 600px;
-            background: #1a1a1e;
+            margin: auto;
+            background: #1e1e1e;
             padding: 30px;
-            border-radius: 12px;
+            border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            margin: 0 auto;
-            border: 1px solid #2a2a30;
         }
-        h1 { color: #007acc; font-size: 24px; margin-bottom: 20px; }
-        p { color: #aaaaaa; font-size: 15px; line-height: 1.6; }
-        .status-box {
-            background: #222226;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 5px solid #007acc;
-            margin: 20px 0;
-            font-weight: bold;
-        }
-        .input-group {
-            margin: 15px 0;
-            text-align: right;
-        }
-        label { display: block; margin-bottom: 8px; color: #cccccc; font-size: 14px; }
-        input[type="text"], input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            box-sizing: border-box;
-            background: #2a2a30;
-            border: 1px solid #3a3a42;
-            color: white;
-            border-radius: 6px;
-        }
-        .btn {
-            background: #007acc;
+        h1 { color: #00adb5; }
+        button {
+            background-color: #00adb5;
             color: white;
             border: none;
             padding: 12px 25px;
             font-size: 16px;
-            font-weight: bold;
-            border-radius: 6px;
             cursor: pointer;
-            width: 100%;
+            border-radius: 5px;
             margin-top: 15px;
-            transition: 0.3s;
         }
-        .btn:hover { background: #005999; }
+        button:hover { background-color: #007a80; }
+        input {
+            padding: 10px;
+            width: 80%;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #333;
+            background: #252525;
+            color: white;
+            text-align: center;
+        }
+        .status {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #ffde7d;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>مستضيف تفعيل GoldHEN الذاتي</h1>
-    <p>قم بفتح هذه الصفحة من متصفح الـ <b>PS4</b> لتفعيل الـ BinLoader أولاً، أو استخدمها من الكمبيوتر/الهاتف لإرسال ملف الـ Payload.</p>
+    <h1>مُضيف تفعيل GoldHEN الأوفلاين</h1>
+    <p>قم بتشغيل ثغرة الـ BinLoader على الـ PS4 أولاً، ثم استخدم هذه الصفحة من الكمبيوتر/الهاتف لإرسال البايلود.</p>
     
-    <div class="status-box" id="status">
-        حالة النظام: جاهز وينتظر الإجراء...
-    </div>
+    <div id="cache-status" style="color: #393e46; font-size: 14px; margin-bottom: 15px;">جاري فحص حالة الكاش...</div>
 
-    <div class="input-group">
-        <label>IP الخاص بجهاز الـ PS4:</label>
-        <input type="text" id="ps4ip" placeholder="مثال: 192.168.1.15">
-    </div>
+    <input type="text" id="ps4ip" placeholder="اكتب عنوان IP جهاز الـ PS4 هنا (مثال: 192.168.1.5)">
+    <br>
+    <input type="file" id="payloadFile" accept=".bin">
+    <br>
+    <button onclick="sendPayload()">إرسال بايلود GoldHEN</button>
 
-    <div class="input-group">
-        <label>اختر ملف البايلود (GoldHEN.bin):</label>
-        <input type="file" id="payloadFile" accept=".bin">
-    </div>
-
-    <button class="btn" onclick="sendPayload()">إرسال البايلود إلى الـ PS4</button>
+    <div class="status" id="status-msg">جاهز لإرسال الملف...</div>
 </div>
 
 <script>
-    function log(message) {
-        document.getElementById('status').innerText = message;
+    // تسجيل نظام الأوفلاين كاش (Service Worker)
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js')
+        .then(() => {
+            document.getElementById('cache-status').innerText = "تم حفظ الموقع بنجاح! يمكنك استخدامه بدون إنترنت (Offline).";
+            document.getElementById('cache-status').style.color = "#4eed94";
+        })
+        .catch(err => {
+            document.getElementById('cache-status').innerText = "فشل حفظ الكاش تلقائياً.";
+            document.getElementById('cache-status').style.color = "#ff6b6b";
+        });
     }
 
-    async function sendPayload() {
-        const ip = document.getElementById('ps4ip').value;
-        const fileInput = document.getElementById('payloadFile');
-        
+    // دالة إرسال البايلود عبر الشبكة إلى منفذ البلايستيشن 9090
+    function sendPayload() {
+        var ip = document.getElementById('ps4ip').value;
+        var fileInput = document.getElementById('payloadFile');
+        var status = document.getElementById('status-msg');
+
         if (!ip) {
-            alert('الرجاء إدخال عنوان IP الخاص بالـ PS4');
+            status.innerText = "خطأ: يرجى كتابة الـ IP الخاص بالبلايستيشن أولاً!";
             return;
         }
         if (fileInput.files.length === 0) {
-            alert('الرجاء اختيار ملف GoldHEN.bin أولاً');
+            status.innerText = "خطأ: يرجى اختيار ملف GoldHEN.bin أولاً!";
             return;
         }
 
-        const file = fileInput.files[0];
-        const reader = new FileReader();
+        var file = fileInput.files[0];
+        var reader = new FileReader();
 
-        log("جاري قراءة ملف البايلود...");
+        status.innerText = "جاري قراءة ملف البايلود...";
 
         reader.onload = function(e) {
-            const buffer = e.target.result;
-            log("جاري الاتصال بالـ PS4 على منفذ 9090...");
+            var buffer = e.target.result;
+            status.innerText = "جاري الاتصال بالـ PS4 على منفذ 9090...";
 
-            const socket = new WebSocket("ws://" + ip + ":9090"); 
-            // ملاحظة: بعض الثغرات تستخدم مآخذ عادية (الشبكة المحلية)، إذا كنت ترسل من المتصفح مباشرة للـ PS4
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "http://" + ip + ":9090", true);
             
-            // محاكاة إرسال عبر أداة المتصفح القياسية للشبكة
-            fetch("http://" + ip + ":9090", {
-                method: "POST",
-                body: buffer,
-                mode: "no-cors"
-            }).then(() => {
-                log("تم إرسال البايلود بنجاح! راجع شاشة الـ PS4 الآن.");
-            }).catch(err => {
-                log("خطأ في الاتصال! تأكد من تفعيل الـ BinLoader على الـ PS4 وتطابق الـ IP.");
-            });
+            xhr.onload = function() {
+                status.innerText = "تم إرسال بايلود GoldHEN بنجاح! تحقق من شاشة التلفاز.";
+                status.style.color = "#4eed94";
+            };
+            
+            xhr.onerror = function() {
+                status.innerText = "فشل الاتصال! تأكد من أن الـ IP صحيح وأنك قمت بتفعيل زر BinLoader على الـ PS4.";
+                status.style.color = "#ff6b6b";
+            };
+
+            xhr.send(buffer);
         };
 
         reader.readAsArrayBuffer(file);
