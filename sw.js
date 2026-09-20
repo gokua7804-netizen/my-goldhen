@@ -1,20 +1,26 @@
-const CACHE_NAME = 'raw-cache-1352-v1';
+const CACHE_NAME = 'instant-goldhen-cache-v3';
 const ASSETS = [
   './',
-  './index.html'
+  './index.html',
+  './goldhen.bin'
 ];
 
 self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)));
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
+  );
 });
 
 self.addEventListener('activate', event => {
-  event.waitUntil(caches.keys().then(keys => Promise.all(
-    keys.map(key => { if (key !== CACHE_NAME) return caches.delete(key); })
-  )));
+  event.waitUntil(
+    caches.keys().then(keys => Promise.all(
+      keys.map(key => { if (key !== CACHE_NAME) return caches.delete(key); })
+    ))
+  );
 });
 
 self.addEventListener('fetch', event => {
-  event.respondWith(caches.match(event.request).then(cached => cached || fetch(event.request)));
+  event.respondWith(
+    caches.match(event.request).then(cached => cached || fetch(event.request))
+  );
 });
-
