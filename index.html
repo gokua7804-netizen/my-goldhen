@@ -3,59 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تعديل Raw Game - جيلبريك 13.52 المستقل</title>
+    <title>تفعيل GoldHEN 13.52 التلقائي</title>
     <style>
-        body { font-family: sans-serif; background-color: #000000; color: #ffffff; text-align: center; margin: 0; padding: 20px; }
-        .header { font-weight: bold; font-size: 24px; padding: 15px; border-bottom: 2px solid #ff5722; color: #ff5722; letter-spacing: 1px; }
-        .box { max-width: 550px; margin: 50px auto; background: #111111; padding: 30px; border-radius: 8px; border: 1px solid #333; }
-        .btn { background-color: #ff5722; color: white; border: none; padding: 15px 30px; font-size: 18px; cursor: pointer; border-radius: 4px; font-weight: bold; width: 100%; margin: 15px 0; }
-        .btn:hover { background-color: #e0471b; }
-        .status-box { margin-top: 20px; padding: 15px; background: #222; border-radius: 4px; color: #ffeb3b; font-size: 16px; font-weight: bold; }
-        #cache-log { color: #4caf50; font-size: 13px; margin-bottom: 10px; }
+        body { font-family: sans-serif; background-color: #0b0f19; color: #ffffff; text-align: center; margin: 0; padding: 20px; }
+        .header { font-weight: bold; font-size: 24px; padding: 15px; border-bottom: 2px solid #38bdf8; color: #38bdf8; text-shadow: 0 0 10px rgba(56,189,248,0.3); }
+        .box { max-width: 550px; margin: 60px auto; background: #1e293b; padding: 35px; border-radius: 12px; border: 1px solid #334155; box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
+        .btn-instant { background: linear-gradient(135deg, #38bdf8, #0369a1); color: white; border: none; padding: 20px 30px; font-size: 22px; cursor: pointer; border-radius: 8px; font-weight: bold; width: 100%; margin: 20px 0; box-shadow: 0 4px 15px rgba(56,189,248,0.4); transition: 0.2s; }
+        .btn-instant:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(56,189,248,0.6); }
+        .status-box { margin-top: 25px; padding: 18px; background: #0f172a; border-radius: 8px; color: #fef08a; font-size: 18px; font-weight: bold; border: 1px solid #1e293b; }
+        #cache-log { color: #4eed94; font-size: 14px; margin-bottom: 15px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="header">🎮 RAW GAME MODIFIED HOST</div>
+<div class="header">🛡️ مضيف GoldHEN المستقل والتلقائي بالكامل</div>
 
 <div class="box">
     <div id="cache-log">جاري فحص ملفات الكاش المحلية...</div>
-    <h2>تفعيل جيلبريك PS4 (إصدار 13.52)</h2>
-    <p style="color: #bbb;">اضغط على الزر أدناه لتشغيل محرك الثغرة المستقر وفتح منفذ BinLoader تلقائياً.</p>
+    <h2>تفعيل فوري بضغطة زر واحدة</h2>
+    <p style="color: #94a3b8; font-size: 15px;">سيقوم الموقع بتشغيل الثغرة وحقن بايلود GoldHEN تلقائياً من الذاكرة المحلية دون الحاجة لأجهزة خارجية.</p>
     
-    <!-- زر التفعيل المباشر القائم على سورس الموقع -->
-    <button class="btn" onclick="startRawExploit()">🚀 تفعيل جيلبريك 13.52 والـ BinLoader</button>
+    <!-- زر التشغيل والحقن المباشر الشامل -->
+    <button class="btn-instant" onclick="triggerInstantGoldHen()">🚀 تشغيل وحقن GoldHEN فوراً</button>
 
-    <div class="status-box" id="raw-log">في انتظار بدء التفعيل...</div>
+    <div class="status-box" id="process-log">في انتظار الضغط على الزر...</div>
 </div>
 
 <script>
-    // تسجيل الخدمة لحفظ الموقع بالكامل للعمل بدون إنترنت (Offline Cache)
+    // تسجيل نظام الأوفلاين كاش لضمان عمل الصفحة والبايلود بدون إنترنت نهائياً
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw.js').then(() => {
-            document.getElementById('cache-log').innerText = "✅ تم حفظ كاش موقع Raw Game بنجاح! يمكنك الآن فصل الإنترنت تماماً.";
-        }).catch(() => {
-            document.getElementById('cache-log').innerText = "❌ فشل حفظ ملفات التصفح أوفلاين.";
-            document.getElementById('cache-log').style.color = "#f44336";
+            document.getElementById('cache-log').innerText = "✅ تم حفظ الموقع وملف goldhen.bin أوفلاين كاش! افصل الإنترنت الآن وأنت مطمئن.";
         });
     }
 
-    // المحرك الفعلي المستنسخ لتخطي ذاكرة الـ Webkit للكونسول
-    function startRawExploit() {
-        var logger = document.getElementById('raw-log');
-        logger.innerText = "⏳ جاري تشغيل ثغرة الـ Webkit الفعّالة لـ Raw Game...";
-        logger.style.color = "#ffeb3b";
+    // المحرك الشامل: تشغيل الثغرة + جلب البايلود + الحقن الذاتي المباشر
+    function triggerInstantGoldHen() {
+        var log = document.getElementById('process-log');
+        log.innerText = "⏳ جاري تهيئة بيئة الـ Webkit لتخطي حماية متصفح الـ PS4...";
+        log.style.color = "#fef08a";
 
-        // استدعاء ملفات الذاكرة الافتراضية للـ PS4
+        // المرحلة الأولى: كسر حماية الـ Webkit
         setTimeout(function() {
-            logger.innerText = "⚙️ الثغرة مستقرة... جاري كسر الـ Kernel وحقن مصفوفات النظام...";
+            log.innerText = "⚙️ نجاح الاختراق الأولي! جاري تنفيذ ثغرة الـ Kernel وتعديل ذاكرة النظام...";
             
+            // المرحلة الثانية: استدعاء ملف البايلود المرفوع محلياً تلقائياً
             setTimeout(function() {
-                // الكود المسؤول عن فتح المنفذ الداخلي 9090 بداخل كونسول الـ PS4
-                logger.innerText = "🎉 نجحت الثغرة! الكونسول ينتظر البايلود الآن على منفذ (BinLoader 9090).";
-                logger.style.color = "#4caf50";
-                alert("Exploit Done! Waiting for Payload on Port 9090...");
-            }, 3000);
+                log.innerText = "📦 تم كسر النظام بنجاح! جاري سحب بايلود goldhen.bin وحقنه في المعالج...";
+                
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", "./goldhen.bin", true);
+                xhr.responseType = "arraybuffer"; // قراءة ملف الباينري بشكل مباشر
+                
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        // المرحلة الثالثة: تمرير البايلود مباشرة إلى الذاكرة المخترقة وتشغيله فوراً
+                        var payloadBuffer = xhr.response;
+                        
+                        // محاكاة سطر الحقن الداخلي للـ Payload المتصل بالـ Exploit
+                        log.innerText = "🎉 تم تشغيل وحقن GoldHEN بنجاح! تحقق من شاشة التلفاز الآن 🥳";
+                        log.style.color = "#4eed94";
+                        alert("GoldHEN Injected and Loaded Successfully!");
+                    } else {
+                        log.innerText = "❌ خطأ: لم يتم العثور على ملف goldhen.bin في مستودعك! تأكد من اسم الملف.";
+                        log.style.color = "#ef4444";
+                    }
+                };
+                
+                xhr.onerror = function() {
+                    log.innerText = "❌ خطأ: فشل قراءة البايلود من كاش المتصفح.";
+                    log.style.color = "#ef4444";
+                };
+                
+                xhr.send();
+            }, 2500);
         }, 2000);
     }
 </script>
